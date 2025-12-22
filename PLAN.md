@@ -5,6 +5,7 @@
 A Figma plugin that extracts styles from ideation files (client designs, Figma Make outputs) and applies them to DS4DS (Kido-DS) to quickly generate client-specific design systems.
 
 **Single plugin, two operational modes:**
+
 - **Extract Mode** - Run in source/ideation file to capture styles
 - **Apply Mode** - Run in target DS file to apply captured styles
 
@@ -16,46 +17,47 @@ Based on actual Figma Variables export from Kido-DS (`WNOcZbybSn7dAGjTMimIsJ`):
 
 ### Variable Collections
 
-| Collection | Mode(s) | Content |
-|------------|---------|---------|
-| **spacing** | Mode 1 | 30 spacing values (2-120px, negatives) |
-| **border** | Mode 1 | Width tokens + Radius tokens |
-| **theme** | **Light, Dark** | System colors, Component colors, Alpha colors, Shadows |
-| **Tailwind CSS v4.0.0** | Mode 1 | Primitive color palette |
+| Collection              | Mode(s)         | Content                                                |
+| ----------------------- | --------------- | ------------------------------------------------------ |
+| **spacing**             | Mode 1          | 30 spacing values (2-120px, negatives)                 |
+| **border**              | Mode 1          | Width tokens + Radius tokens                           |
+| **theme**               | **Light, Dark** | System colors, Component colors, Alpha colors, Shadows |
+| **Tailwind CSS v4.0.0** | Mode 1          | Primitive color palette                                |
 
 ### Key Token Categories
 
-| Category | Examples | Notes |
-|----------|----------|-------|
-| System BG | `system/bg/primary`, `system/bg/01`...`04`, `system/bg/inverse` | Background colors |
-| System FG | `system/fg/01`...`03`, `system/fg/primary`, `system/fg/disabled` | Text/foreground colors |
-| System Border | `system/border/static/01`...`03`, `system/border/interactive/hover` | Border colors |
-| System Overlays | `system/overlays/overlay-hover`, `overlay-active` | Overlay colors |
-| System Feedback | `system/feedback/danger/subtle\|medium\|strong` | Semantic feedback |
-| Component Tokens | `components/button/outlined/bg-hover` | Component-specific overrides |
-| Radius Semantic | `radius/semantic/large-controls` (8px), `small-controls` (6px) | Border radius |
-| Radius Global | `radius/global/2`, `4`, `6`, `8`, `12`... | Raw radius values |
-| Width | `width/thin` (0.5), `default` (1), `thick` (2) | Stroke widths |
-| Alpha | `alpha/primary/500-20p`, `alpha/white/12p` | Opacity variants |
+| Category         | Examples                                                            | Notes                        |
+| ---------------- | ------------------------------------------------------------------- | ---------------------------- |
+| System BG        | `system/bg/primary`, `system/bg/01`...`04`, `system/bg/inverse`     | Background colors            |
+| System FG        | `system/fg/01`...`03`, `system/fg/primary`, `system/fg/disabled`    | Text/foreground colors       |
+| System Border    | `system/border/static/01`...`03`, `system/border/interactive/hover` | Border colors                |
+| System Overlays  | `system/overlays/overlay-hover`, `overlay-active`                   | Overlay colors               |
+| System Feedback  | `system/feedback/danger/subtle\|medium\|strong`                     | Semantic feedback            |
+| Component Tokens | `components/button/outlined/bg-hover`                               | Component-specific overrides |
+| Radius Semantic  | `radius/semantic/large-controls` (8px), `small-controls` (6px)      | Border radius                |
+| Radius Global    | `radius/global/2`, `4`, `6`, `8`, `12`...                           | Raw radius values            |
+| Width            | `width/thin` (0.5), `default` (1), `thick` (2)                      | Stroke widths                |
+| Alpha            | `alpha/primary/500-20p`, `alpha/white/12p`                          | Opacity variants             |
 
 ### Radius Semantic Values
 
-| Token | Value | Use Case |
-|-------|-------|----------|
-| `sharp` | 0 | No radius |
-| `tiny-elements` | 2px | Very small elements |
-| `small-elements` | 4px | Small elements |
-| `small-controls` | 6px | Checkboxes, small inputs |
-| `large-controls` | 8px | Buttons, inputs |
-| `default-surface` | 8px | Cards, panels |
-| `large-surface` | 12px | Modals, dialogs |
-| `max` | 1000px | Pills, avatars |
+| Token             | Value  | Use Case                 |
+| ----------------- | ------ | ------------------------ |
+| `sharp`           | 0      | No radius                |
+| `tiny-elements`   | 2px    | Very small elements      |
+| `small-elements`  | 4px    | Small elements           |
+| `small-controls`  | 6px    | Checkboxes, small inputs |
+| `large-controls`  | 8px    | Buttons, inputs          |
+| `default-surface` | 8px    | Cards, panels            |
+| `large-surface`   | 12px   | Modals, dialogs          |
+| `max`             | 1000px | Pills, avatars           |
 
 ### Alpha Color Levels
 
 Primary color opacity variants: `4p`, `8p`, `12p`, `20p`, `38p`, `50p`
 
 Example: `#615fff` (indigo.500) generates:
+
 - `alpha/primary/500-20p` → `rgba(97, 95, 255, 0.20)` for outlined button hover
 - `alpha/primary/500-38p` → `rgba(97, 95, 255, 0.38)` for outlined button pressed
 
@@ -65,31 +67,31 @@ Example: `#615fff` (indigo.500) generates:
 
 Full component list organized by category:
 
-| Category | Components |
-|----------|------------|
-| Avatar | Avatar, Username, Avatar Number, Avatar Group |
-| Badge | Badge, Asset Badge, Text Badge, Pill Badge |
-| Buttons | Buttons, Button Icon, Button Text |
-| Checkbox | Checkbox Icon, Checkbox Item Icon, CheckboxVector, Checkbox Item Vector |
-| Chips | Chips |
-| Inputs | Text Input (Outlined/Contained/Underlined), Select Input (3 variants), Text Area (3 variants), Numeric Input (8 variants) |
-| Radio | Radio Button / Icon, Radio Button Item / Icon, etc. |
-| Slider | Basic, With Values, With Values and Marks |
-| Search | 6 variants (Simple + Label, each in 3 styles) |
-| Tabs | 6 tab bar variants |
-| Toggle | 5 toggle variants |
-| Tooltip | Tooltip, Tooltip / Outlined |
-| Banner | Contained, Outlined, With Partial Stroke |
-| Dropdown | Dropdown |
-| List | Checkbox Items, Radio Button Items, Dropdown Items, Toggle Items |
-| Pagination | Pagination, Dots, Controls |
-| Progress | Progress Bar, Progress Indicator (2 variants) |
-| Snackbar | Basic, Contained, Outlined, Partial Stroke |
-| Toast | Contained, Outlined, Partial Stroke |
-| Card | Empty, With Header and Footer, With Image |
-| Date Picker | Date picker, Year picker, Month picker |
-| Modal | Modal |
-| Table | Grid, Columns, Rows |
+| Category    | Components                                                                                                                |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Avatar      | Avatar, Username, Avatar Number, Avatar Group                                                                             |
+| Badge       | Badge, Asset Badge, Text Badge, Pill Badge                                                                                |
+| Buttons     | Buttons, Button Icon, Button Text                                                                                         |
+| Checkbox    | Checkbox Icon, Checkbox Item Icon, CheckboxVector, Checkbox Item Vector                                                   |
+| Chips       | Chips                                                                                                                     |
+| Inputs      | Text Input (Outlined/Contained/Underlined), Select Input (3 variants), Text Area (3 variants), Numeric Input (8 variants) |
+| Radio       | Radio Button / Icon, Radio Button Item / Icon, etc.                                                                       |
+| Slider      | Basic, With Values, With Values and Marks                                                                                 |
+| Search      | 6 variants (Simple + Label, each in 3 styles)                                                                             |
+| Tabs        | 6 tab bar variants                                                                                                        |
+| Toggle      | 5 toggle variants                                                                                                         |
+| Tooltip     | Tooltip, Tooltip / Outlined                                                                                               |
+| Banner      | Contained, Outlined, With Partial Stroke                                                                                  |
+| Dropdown    | Dropdown                                                                                                                  |
+| List        | Checkbox Items, Radio Button Items, Dropdown Items, Toggle Items                                                          |
+| Pagination  | Pagination, Dots, Controls                                                                                                |
+| Progress    | Progress Bar, Progress Indicator (2 variants)                                                                             |
+| Snackbar    | Basic, Contained, Outlined, Partial Stroke                                                                                |
+| Toast       | Contained, Outlined, Partial Stroke                                                                                       |
+| Card        | Empty, With Header and Footer, With Image                                                                                 |
+| Date Picker | Date picker, Year picker, Month picker                                                                                    |
+| Modal       | Modal                                                                                                                     |
+| Table       | Grid, Columns, Rows                                                                                                       |
 
 **All component keys are stored in `src/shared/ds4ds-schema.ts`.**
 
@@ -150,6 +152,7 @@ src/
 ```
 
 **Tab Visual Distinction:**
+
 - Extract tab: Purple/brand accent
 - Apply tab: Green accent
 - Active tab has filled background, inactive has outline
@@ -207,16 +210,18 @@ src/
 ### Key UI Features:
 
 1. **Hybrid Matching Approach**
+
    - Dropdown selects DS4DS component category + component
    - Extracted properties show **smart suggestions** based on component type
    - User can accept suggestions or browse all variables
 
 2. **Smart Suggestions Logic**
+
    ```typescript
    // When user selects "Button" → "Buttons"
    // And extracted fill is #615FFF
    // Suggest: system/bg/primary (because contained buttons use this)
-   
+
    // When extracted radius is 8px
    // Suggest: radius/semantic/large-controls (exact match)
    ```
@@ -347,17 +352,16 @@ src/
         "name": "Primary Button"
       },
       "properties": {
-        "fills": [
-          { "type": "SOLID", "hex": "#3366FF" }
-        ],
+        "fills": [{ "type": "SOLID", "hex": "#3366FF" }],
         "cornerRadius": 12,
-        "strokes": [
-          { "type": "SOLID", "hex": "#2255EE", "weight": 1 }
-        ]
+        "strokes": [{ "type": "SOLID", "hex": "#2255EE", "weight": 1 }]
       },
       "mappings": [
         { "property": "fill", "variableName": "system/bg/primary" },
-        { "property": "radius", "variableName": "radius/semantic/large-controls" }
+        {
+          "property": "radius",
+          "variableName": "radius/semantic/large-controls"
+        }
       ]
     }
   ],
@@ -400,8 +404,8 @@ src/
 ## Color Derivation Logic
 
 ```typescript
-const ALPHA_LEVELS = [0.04, 0.08, 0.12, 0.20, 0.38, 0.50] as const;
-const ALPHA_NAMES = ['4p', '8p', '12p', '20p', '38p', '50p'] as const;
+const ALPHA_LEVELS = [0.04, 0.08, 0.12, 0.2, 0.38, 0.5] as const;
+const ALPHA_NAMES = ["4p", "8p", "12p", "20p", "38p", "50p"] as const;
 
 interface DerivedAlphaColors {
   [key: string]: RGBA;
@@ -409,12 +413,12 @@ interface DerivedAlphaColors {
 
 function derivePrimaryAlphaColors(baseHex: string): DerivedAlphaColors {
   const base = hexToRgba(baseHex);
-  
+
   const result: DerivedAlphaColors = {};
   ALPHA_LEVELS.forEach((alpha, i) => {
     result[ALPHA_NAMES[i]] = { ...base, a: alpha };
   });
-  
+
   return result;
 }
 
@@ -432,6 +436,7 @@ function derivePrimaryAlphaColors(baseHex: string): DerivedAlphaColors {
 ## Implementation Phases
 
 ### Phase 1: Project Setup & Schema ✅
+
 **Status: COMPLETE**
 
 - [x] Initialize create-figma-plugin project
@@ -440,6 +445,7 @@ function derivePrimaryAlphaColors(baseHex: string): DerivedAlphaColors {
 - [x] Add DS4DS component registry (89 components)
 
 ### Phase 2: Extract Mode - UI
+
 **Effort: 1.5 days**
 
 - [ ] Mode tabs UI (Extract/Apply)
@@ -450,6 +456,7 @@ function derivePrimaryAlphaColors(baseHex: string): DerivedAlphaColors {
 - [ ] Export JSON functionality
 
 ### Phase 3: Extract Mode - Extraction Logic
+
 **Effort: 1 day**
 
 - [ ] Fill extractor (solid colors)
@@ -459,6 +466,7 @@ function derivePrimaryAlphaColors(baseHex: string): DerivedAlphaColors {
 - [ ] Smart suggestion engine (component → expected variables)
 
 ### Phase 4: Apply Mode - UI
+
 **Effort: 1 day**
 
 - [ ] JSON import UI (file upload + paste)
@@ -467,6 +475,7 @@ function derivePrimaryAlphaColors(baseHex: string): DerivedAlphaColors {
 - [ ] Apply button with confirmation
 
 ### Phase 5: Apply Mode - Variable Updates
+
 **Effort: 1.5 days**
 
 - [ ] Read existing variables from file
@@ -476,6 +485,7 @@ function derivePrimaryAlphaColors(baseHex: string): DerivedAlphaColors {
 - [ ] Handle errors (variable not found, type mismatch)
 
 ### Phase 6: Polish & Edge Cases
+
 **Effort: 1 day**
 
 - [ ] Error handling and user feedback
@@ -488,16 +498,16 @@ function derivePrimaryAlphaColors(baseHex: string): DerivedAlphaColors {
 
 ## Milestones
 
-| Milestone | Deliverable | Est. Effort |
-|-----------|-------------|-------------|
-| **M1** | Project setup, schema complete | ✅ Done |
-| **M2** | Extract mode UI shell | 1 day |
-| **M3** | Property extraction + suggestions | 1 day |
-| **M4** | JSON export working | 0.5 day |
-| **M5** | Apply mode UI complete | 1 day |
-| **M6** | Variable mapping & preview | 1 day |
-| **M7** | Apply to variables working | 1 day |
-| **M8** | Polish, error handling | 1 day |
+| Milestone | Deliverable                       | Est. Effort |
+| --------- | --------------------------------- | ----------- |
+| **M1**    | Project setup, schema complete    | ✅ Done     |
+| **M2**    | Extract mode UI shell             | 1 day       |
+| **M3**    | Property extraction + suggestions | 1 day       |
+| **M4**    | JSON export working               | 0.5 day     |
+| **M5**    | Apply mode UI complete            | 1 day       |
+| **M6**    | Variable mapping & preview        | 1 day       |
+| **M7**    | Apply to variables working        | 1 day       |
+| **M8**    | Polish, error handling            | 1 day       |
 
 **Total estimated effort: ~7 days**
 
@@ -508,20 +518,23 @@ function derivePrimaryAlphaColors(baseHex: string): DerivedAlphaColors {
 ### Theme Modes
 
 DS4DS uses two theme modes that need to be handled:
+
 - **Light** - Default values
 - **Dark** - Inverted values
 
 When applying styles, user chooses:
+
 - Apply to Light only
-- Apply to Dark only  
+- Apply to Dark only
 - Apply to Both (most common for brand colors)
 
 ```typescript
-const collection = figma.variables.getLocalVariableCollections()
-  .find(c => c.name === 'theme');
+const collection = figma.variables
+  .getLocalVariableCollections()
+  .find((c) => c.name === "theme");
 
-const lightModeId = collection.modes.find(m => m.name === 'Light')?.modeId;
-const darkModeId = collection.modes.find(m => m.name === 'Dark')?.modeId;
+const lightModeId = collection.modes.find((m) => m.name === "Light")?.modeId;
+const darkModeId = collection.modes.find((m) => m.name === "Dark")?.modeId;
 
 // Apply to both modes
 variable.setValueForMode(lightModeId, newValue);
@@ -535,16 +548,16 @@ variable.setValueForMode(darkModeId, newValue);
 const allVars = figma.variables.getLocalVariables();
 
 // Find by name
-const primaryBg = allVars.find(v => v.name === 'system/bg/primary');
+const primaryBg = allVars.find((v) => v.name === "system/bg/primary");
 
 // Update value for specific mode
 primaryBg.setValueForMode(modeId, { r: 0.2, g: 0.4, b: 1 });
 
 // Color format (Figma uses 0-1 range)
 interface FigmaColor {
-  r: number;  // 0-1
-  g: number;  // 0-1
-  b: number;  // 0-1
+  r: number; // 0-1
+  g: number; // 0-1
+  b: number; // 0-1
   a?: number; // 0-1, optional for alpha
 }
 ```
@@ -553,23 +566,23 @@ interface FigmaColor {
 
 ```typescript
 // main.ts
-import { emit, on, showUI } from '@create-figma-plugin/utilities';
+import { emit, on, showUI } from "@create-figma-plugin/utilities";
 
 export default function () {
   showUI({ width: 400, height: 600 });
-  
+
   // Selection change listener
-  figma.on('selectionchange', () => {
+  figma.on("selectionchange", () => {
     const selection = figma.currentPage.selection;
     if (selection.length > 0) {
-      emit('SELECTION_CHANGED', extractSelectionInfo(selection[0]));
+      emit("SELECTION_CHANGED", extractSelectionInfo(selection[0]));
     }
   });
-  
+
   // Apply request
-  on('APPLY_MAPPINGS', (mappings) => {
+  on("APPLY_MAPPINGS", (mappings) => {
     const results = applyToVariables(mappings);
-    emit('APPLY_COMPLETE', results);
+    emit("APPLY_COMPLETE", results);
   });
 }
 ```
@@ -578,21 +591,22 @@ export default function () {
 
 ## Key Decisions
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Plugin architecture | Single plugin with tabs | Simpler UX, shared code |
-| Theme modes | Light + Dark | DS4DS uses both |
-| DS data source | Static schema file | Reliable, fast, versioned |
-| Component selection | Category → Component dropdowns | Organized, 89 components manageable |
-| Variable suggestions | Smart suggestions + browse all | Fast for common cases, flexible for edge |
-| Color derivation | Auto-calculate alpha variants | Consistent with DS4DS patterns |
-| JSON format | Full extraction + derived + mappings | Portable, debuggable, re-usable |
+| Decision             | Choice                               | Rationale                                |
+| -------------------- | ------------------------------------ | ---------------------------------------- |
+| Plugin architecture  | Single plugin with tabs              | Simpler UX, shared code                  |
+| Theme modes          | Light + Dark                         | DS4DS uses both                          |
+| DS data source       | Static schema file                   | Reliable, fast, versioned                |
+| Component selection  | Category → Component dropdowns       | Organized, 89 components manageable      |
+| Variable suggestions | Smart suggestions + browse all       | Fast for common cases, flexible for edge |
+| Color derivation     | Auto-calculate alpha variants        | Consistent with DS4DS patterns           |
+| JSON format          | Full extraction + derived + mappings | Portable, debuggable, re-usable          |
 
 ---
 
 ## Ready to Implement
 
 Schema complete with:
+
 - ✅ All variable collections (spacing, border, theme, primitives)
 - ✅ All 89 DS4DS components with keys
 - ✅ Component → Variable mappings

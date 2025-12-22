@@ -1188,7 +1188,10 @@ export const DS4DS_COMPONENT_CATEGORIES = {
     components: [
       { name: "Avatar", key: "e978573d54b4b61133aaa9fb1287eef36df0e1ed" },
       { name: "Username", key: "06dd30dbb923f224be343051b7b12028a58f7c2a" },
-      { name: "Avatar Number", key: "02be470b66ff4d2c85ada06efbe67317f8cc64f7" },
+      {
+        name: "Avatar Number",
+        key: "02be470b66ff4d2c85ada06efbe67317f8cc64f7",
+      },
       { name: "Avatar Group", key: "e5496c2a096678c5554623ba200b676372433be7" },
     ],
   },
@@ -1219,10 +1222,22 @@ export const DS4DS_COMPONENT_CATEGORIES = {
   checkbox: {
     label: "Checkbox",
     components: [
-      { name: "Checkbox Icon", key: "0e360b2a80465d5bcbe6c218222fb5896351ed97" },
-      { name: "Checkbox Item Icon", key: "0a0e2be0f6ece4620ef8d28b39ee6995656393b2" },
-      { name: "CheckboxVector", key: "43e9aef5432cf48a3cf2b727a815872f717ba211" },
-      { name: "Checkbox Item Vector", key: "b07ff3f8009f606c7537098bfa932d1e916206ac" },
+      {
+        name: "Checkbox Icon",
+        key: "0e360b2a80465d5bcbe6c218222fb5896351ed97",
+      },
+      {
+        name: "Checkbox Item Icon",
+        key: "0a0e2be0f6ece4620ef8d28b39ee6995656393b2",
+      },
+      {
+        name: "CheckboxVector",
+        key: "43e9aef5432cf48a3cf2b727a815872f717ba211",
+      },
+      {
+        name: "Checkbox Item Vector",
+        key: "b07ff3f8009f606c7537098bfa932d1e916206ac",
+      },
     ],
   },
   chips: {
@@ -1234,102 +1249,237 @@ export const DS4DS_COMPONENT_CATEGORIES = {
   input: {
     label: "Text Input",
     components: [
-      { name: "Text Input Outlined", key: "3fa0112d53708a35080dfd22530ebf3dbbbcdf4d" },
-      { name: "Text Input Contained", key: "46e44149a998ceae1bdbff378c85818e4ecd89e6" },
-      { name: "Text Input Underlined", key: "2ef5964e087304eaecb3887bb3b2441834450f21" },
+      {
+        name: "Text Input Outlined",
+        key: "3fa0112d53708a35080dfd22530ebf3dbbbcdf4d",
+      },
+      {
+        name: "Text Input Contained",
+        key: "46e44149a998ceae1bdbff378c85818e4ecd89e6",
+      },
+      {
+        name: "Text Input Underlined",
+        key: "2ef5964e087304eaecb3887bb3b2441834450f21",
+      },
     ],
   },
   select: {
     label: "Select Input",
     components: [
-      { name: "Select Input Outlined", key: "bb1ce670f2e5eb30645a8381232c4ab166a56834" },
-      { name: "Select Input Contained", key: "0aeeec1c853b6245284581b97e9f7c04f63e1f60" },
-      { name: "Select Input Underlined", key: "cbba2e72a7ad213bef170e4856c5cc6d25f61025" },
+      {
+        name: "Select Input Outlined",
+        key: "bb1ce670f2e5eb30645a8381232c4ab166a56834",
+      },
+      {
+        name: "Select Input Contained",
+        key: "0aeeec1c853b6245284581b97e9f7c04f63e1f60",
+      },
+      {
+        name: "Select Input Underlined",
+        key: "cbba2e72a7ad213bef170e4856c5cc6d25f61025",
+      },
     ],
   },
   textarea: {
     label: "Text Area",
     components: [
-      { name: "Text Area Outlined", key: "cd98d2840dfb806c6d4565cf350241e5154b77e6" },
-      { name: "Text Area Contained", key: "db19df1e8d74d68586027a3adedd40c52b242c26" },
-      { name: "Text Area Underlined", key: "da1e71702ca3f2fa022054c190c88dfa36cb4d7e" },
+      {
+        name: "Text Area Outlined",
+        key: "cd98d2840dfb806c6d4565cf350241e5154b77e6",
+      },
+      {
+        name: "Text Area Contained",
+        key: "db19df1e8d74d68586027a3adedd40c52b242c26",
+      },
+      {
+        name: "Text Area Underlined",
+        key: "da1e71702ca3f2fa022054c190c88dfa36cb4d7e",
+      },
     ],
   },
   numericInput: {
     label: "Numeric Input",
     components: [
-      { name: "Numeric Input (Arrows) Outlined", key: "f6875ee813fd19313ff01f17878ae1bfdf26f188" },
-      { name: "Numeric Input (Arrows) Contained", key: "707fc9732016ef5453e1f2bb6c80a484570ebf5e" },
-      { name: "Numeric Input (Arrows) Underlined", key: "253d85ed1a71e4becb01a1678160ebc0f6480b47" },
-      { name: "Numeric Input (Buttons) Outlined", key: "edafba6ef44ce824e754975cec86f294bc52c665" },
-      { name: "Numeric Input (Buttons) Contained", key: "f09ecd4fa12ca25558f7ee9fc62e78a7c2aeb163" },
-      { name: "Numeric Input (Buttons) Underlined", key: "c16a73a74fc69dcbd69b8207f268f998a7ff69af" },
-      { name: "Numeric Input / Stepper 1", key: "0c7481e296b1aa2fd6a9ee723e862b1fb1bb0879" },
-      { name: "Numeric Input / Stepper 2", key: "920d6e95c1ffe44c033a66901f5328e088b31f36" },
+      {
+        name: "Numeric Input (Arrows) Outlined",
+        key: "f6875ee813fd19313ff01f17878ae1bfdf26f188",
+      },
+      {
+        name: "Numeric Input (Arrows) Contained",
+        key: "707fc9732016ef5453e1f2bb6c80a484570ebf5e",
+      },
+      {
+        name: "Numeric Input (Arrows) Underlined",
+        key: "253d85ed1a71e4becb01a1678160ebc0f6480b47",
+      },
+      {
+        name: "Numeric Input (Buttons) Outlined",
+        key: "edafba6ef44ce824e754975cec86f294bc52c665",
+      },
+      {
+        name: "Numeric Input (Buttons) Contained",
+        key: "f09ecd4fa12ca25558f7ee9fc62e78a7c2aeb163",
+      },
+      {
+        name: "Numeric Input (Buttons) Underlined",
+        key: "c16a73a74fc69dcbd69b8207f268f998a7ff69af",
+      },
+      {
+        name: "Numeric Input / Stepper 1",
+        key: "0c7481e296b1aa2fd6a9ee723e862b1fb1bb0879",
+      },
+      {
+        name: "Numeric Input / Stepper 2",
+        key: "920d6e95c1ffe44c033a66901f5328e088b31f36",
+      },
     ],
   },
   radio: {
     label: "Radio Button",
     components: [
-      { name: "Radio Button / Icon", key: "d03856624a6be9ba50ce2bd04fc6df292ba35426" },
-      { name: "Radio Button Item / Icon", key: "67b1272ac6d5fedbf7cba7f4e99224e463abe392" },
-      { name: "Radio Button / Vector", key: "217f967a6f658672c005979c9bc388811c3eeeb4" },
-      { name: "Radio Button Item / Vector", key: "7f58a9fa0837ad52cf63ae52b08ed7de88c359bd" },
+      {
+        name: "Radio Button / Icon",
+        key: "d03856624a6be9ba50ce2bd04fc6df292ba35426",
+      },
+      {
+        name: "Radio Button Item / Icon",
+        key: "67b1272ac6d5fedbf7cba7f4e99224e463abe392",
+      },
+      {
+        name: "Radio Button / Vector",
+        key: "217f967a6f658672c005979c9bc388811c3eeeb4",
+      },
+      {
+        name: "Radio Button Item / Vector",
+        key: "7f58a9fa0837ad52cf63ae52b08ed7de88c359bd",
+      },
     ],
   },
   slider: {
     label: "Slider",
     components: [
-      { name: "Slider / Basic", key: "dd1c2930460d9e768df6faffb9c9ba43417e5484" },
-      { name: "Slider / With Values", key: "f4e49f772d47b1af49984231de90d8a542b375ca" },
-      { name: "Slider / With Values and Marks", key: "9e2e9be8c6a24798eaa859437c4ff892c3bd0727" },
+      {
+        name: "Slider / Basic",
+        key: "dd1c2930460d9e768df6faffb9c9ba43417e5484",
+      },
+      {
+        name: "Slider / With Values",
+        key: "f4e49f772d47b1af49984231de90d8a542b375ca",
+      },
+      {
+        name: "Slider / With Values and Marks",
+        key: "9e2e9be8c6a24798eaa859437c4ff892c3bd0727",
+      },
     ],
   },
   search: {
     label: "Search",
     components: [
-      { name: "Search / Simple / Outlined", key: "d1cbee420e90c775a15a3eee0e9e61bd32db4850" },
-      { name: "Search / Simple / Contained", key: "76fee6a0f51aa738a7463096bc84059c1ea9dd1b" },
-      { name: "Search / Simple / Underlined", key: "6555c6b1e3c06e769073ca627dc9259540b1c36e" },
-      { name: "Search / Label and helper text / Outlined", key: "d17ab929f45a9a7fc16af3445762aa4b1ae0a995" },
-      { name: "Search / Label and helper text / Contained", key: "c1cacd1f947a8218f0d3339ef2211861f712d2a8" },
-      { name: "Search / Label and helper text / Underlined", key: "c03b44ca74712283b95b30126a6512b2bb6e060a" },
+      {
+        name: "Search / Simple / Outlined",
+        key: "d1cbee420e90c775a15a3eee0e9e61bd32db4850",
+      },
+      {
+        name: "Search / Simple / Contained",
+        key: "76fee6a0f51aa738a7463096bc84059c1ea9dd1b",
+      },
+      {
+        name: "Search / Simple / Underlined",
+        key: "6555c6b1e3c06e769073ca627dc9259540b1c36e",
+      },
+      {
+        name: "Search / Label and helper text / Outlined",
+        key: "d17ab929f45a9a7fc16af3445762aa4b1ae0a995",
+      },
+      {
+        name: "Search / Label and helper text / Contained",
+        key: "c1cacd1f947a8218f0d3339ef2211861f712d2a8",
+      },
+      {
+        name: "Search / Label and helper text / Underlined",
+        key: "c03b44ca74712283b95b30126a6512b2bb6e060a",
+      },
     ],
   },
   tabs: {
     label: "Tabs",
     components: [
-      { name: "Tabs / Outline Tab Bar", key: "ad5a3f707653e91485fee7dea28e908ef701a8b9" },
-      { name: "Tabs / Underlined Tab Bar 1", key: "37f62921ac921adc6f419a92b0080368e6e8f37e" },
-      { name: "Tabs / Underlined Tab Bar 2", key: "65116e7221f23ed5e253ffc4b1c6ec03ab481ffd" },
-      { name: "Tabs / Skeuomorphic tab Bar", key: "07b61cc201a0ccc2e8f2199b6baa24b20e692069" },
-      { name: "Tabs / Raised tab Bar", key: "d12428eb3ea9017202790ad1fe14056e7e6465c3" },
-      { name: "Tabs / Vertical tab Bar", key: "d620c1354238b843525344500fc6ec0f62d8d5b8" },
+      {
+        name: "Tabs / Outline Tab Bar",
+        key: "ad5a3f707653e91485fee7dea28e908ef701a8b9",
+      },
+      {
+        name: "Tabs / Underlined Tab Bar 1",
+        key: "37f62921ac921adc6f419a92b0080368e6e8f37e",
+      },
+      {
+        name: "Tabs / Underlined Tab Bar 2",
+        key: "65116e7221f23ed5e253ffc4b1c6ec03ab481ffd",
+      },
+      {
+        name: "Tabs / Skeuomorphic tab Bar",
+        key: "07b61cc201a0ccc2e8f2199b6baa24b20e692069",
+      },
+      {
+        name: "Tabs / Raised tab Bar",
+        key: "d12428eb3ea9017202790ad1fe14056e7e6465c3",
+      },
+      {
+        name: "Tabs / Vertical tab Bar",
+        key: "d620c1354238b843525344500fc6ec0f62d8d5b8",
+      },
     ],
   },
   tooltip: {
     label: "Tooltip",
     components: [
       { name: "Tooltip", key: "f6ee011c5c55ec82079db4ae04cd80cb408daa05" },
-      { name: "Tooltip / Outlined", key: "8dbe59d0fbd67af83c2f1eceb19b13e0e53e8acb" },
+      {
+        name: "Tooltip / Outlined",
+        key: "8dbe59d0fbd67af83c2f1eceb19b13e0e53e8acb",
+      },
     ],
   },
   toggle: {
     label: "Toggle",
     components: [
-      { name: "Toggle / Icon on knob", key: "bbe9c3a1d79cbcb7c35b2471d9bc10ca0a42d10e" },
-      { name: "Toggle / Icon on body", key: "35e62944ba32040d4f3e90dd9639801da1e105c8" },
-      { name: "Toggle / Text on body", key: "5d5898062c6a69ee15036293dfc731fedf5b3da5" },
-      { name: "Toggle / Larger knob", key: "6a7c4232f96ecd7dc34a2a1248ecaed9d06d39e2" },
-      { name: "Toggle / Toggle item", key: "83bc1f0e7c89e5499a5ea80b96713bc64691ea87" },
+      {
+        name: "Toggle / Icon on knob",
+        key: "bbe9c3a1d79cbcb7c35b2471d9bc10ca0a42d10e",
+      },
+      {
+        name: "Toggle / Icon on body",
+        key: "35e62944ba32040d4f3e90dd9639801da1e105c8",
+      },
+      {
+        name: "Toggle / Text on body",
+        key: "5d5898062c6a69ee15036293dfc731fedf5b3da5",
+      },
+      {
+        name: "Toggle / Larger knob",
+        key: "6a7c4232f96ecd7dc34a2a1248ecaed9d06d39e2",
+      },
+      {
+        name: "Toggle / Toggle item",
+        key: "83bc1f0e7c89e5499a5ea80b96713bc64691ea87",
+      },
     ],
   },
   banner: {
     label: "Banner",
     components: [
-      { name: "Banner / Contained", key: "4051ed5436e3160aa971fb070c97a0cd59d688d4" },
-      { name: "Banner / Outlined", key: "5a1de1e94297fc047e6be6769178c2f96163c602" },
-      { name: "Banner / With Partial Stroke", key: "8f76db1dc8d71f11cf8e6bae30da2121e8c86179" },
+      {
+        name: "Banner / Contained",
+        key: "4051ed5436e3160aa971fb070c97a0cd59d688d4",
+      },
+      {
+        name: "Banner / Outlined",
+        key: "5a1de1e94297fc047e6be6769178c2f96163c602",
+      },
+      {
+        name: "Banner / With Partial Stroke",
+        key: "8f76db1dc8d71f11cf8e6bae30da2121e8c86179",
+      },
     ],
   },
   dropdown: {
@@ -1341,18 +1491,36 @@ export const DS4DS_COMPONENT_CATEGORIES = {
   list: {
     label: "List",
     components: [
-      { name: "List / Checkbox Items", key: "1cdfe656418316693a832522d346f137cf59aa86" },
-      { name: "List / Radio Button Items", key: "aa3249c2a8b087154a85cb03fd3f4c80ba2c1528" },
-      { name: "List / Dropdown Items", key: "5b6745cb2a4367277398e445de511932c6612d39" },
-      { name: "List / Toggle Items", key: "e4227bd1b16933fd533d59c7282662f10acbc447" },
+      {
+        name: "List / Checkbox Items",
+        key: "1cdfe656418316693a832522d346f137cf59aa86",
+      },
+      {
+        name: "List / Radio Button Items",
+        key: "aa3249c2a8b087154a85cb03fd3f4c80ba2c1528",
+      },
+      {
+        name: "List / Dropdown Items",
+        key: "5b6745cb2a4367277398e445de511932c6612d39",
+      },
+      {
+        name: "List / Toggle Items",
+        key: "e4227bd1b16933fd533d59c7282662f10acbc447",
+      },
     ],
   },
   pagination: {
     label: "Pagination",
     components: [
       { name: "Pagination", key: "dff809ac67db6904c36d5b5fbdc77f6fa21a8488" },
-      { name: "Pagination / Dots", key: "e9639f4d5177258881813e2d9d7d48268fd8d9c2" },
-      { name: "Pagination / Controls", key: "22a930fe7e44c1b7abe7797029387fe7e2355bd3" },
+      {
+        name: "Pagination / Dots",
+        key: "e9639f4d5177258881813e2d9d7d48268fd8d9c2",
+      },
+      {
+        name: "Pagination / Controls",
+        key: "22a930fe7e44c1b7abe7797029387fe7e2355bd3",
+      },
     ],
   },
   progressBar: {
@@ -1364,26 +1532,53 @@ export const DS4DS_COMPONENT_CATEGORIES = {
   snackbar: {
     label: "Snackbar",
     components: [
-      { name: "Snackbar / Basic", key: "a33ab6b5570daa01017f2b7886dfd7b50364e9a0" },
-      { name: "Snackbar / Contained", key: "c9f564bfdb6c9756358b42dec83e4d597d018ccc" },
-      { name: "Snackbar / Outlined", key: "ea0a2b089ca8665129b7e2fdb2daee49eeaca546" },
-      { name: "Snackbar / Partial Stroke", key: "d99f6bbafc767e154a136205c201bde33a4676d1" },
+      {
+        name: "Snackbar / Basic",
+        key: "a33ab6b5570daa01017f2b7886dfd7b50364e9a0",
+      },
+      {
+        name: "Snackbar / Contained",
+        key: "c9f564bfdb6c9756358b42dec83e4d597d018ccc",
+      },
+      {
+        name: "Snackbar / Outlined",
+        key: "ea0a2b089ca8665129b7e2fdb2daee49eeaca546",
+      },
+      {
+        name: "Snackbar / Partial Stroke",
+        key: "d99f6bbafc767e154a136205c201bde33a4676d1",
+      },
     ],
   },
   toast: {
     label: "Toast",
     components: [
-      { name: "Toast / Contained", key: "cbd96e5937c39584cdc24c65e77124257b5ec973" },
-      { name: "Toast / Outlined", key: "6c025d09de3ac9deae7298b907123a32f733e4ac" },
-      { name: "Toast / Partial Stroke", key: "7c5b45911920818e6024cb8815a45829eb6fcce2" },
+      {
+        name: "Toast / Contained",
+        key: "cbd96e5937c39584cdc24c65e77124257b5ec973",
+      },
+      {
+        name: "Toast / Outlined",
+        key: "6c025d09de3ac9deae7298b907123a32f733e4ac",
+      },
+      {
+        name: "Toast / Partial Stroke",
+        key: "7c5b45911920818e6024cb8815a45829eb6fcce2",
+      },
     ],
   },
   card: {
     label: "Card",
     components: [
       { name: "Card / Empty", key: "51d884851eda63c5a84f5050a34e33b3932dc7ea" },
-      { name: "Card / With Header and Footer", key: "7d9e007b76f1f7f33164d2195da568a64a87f74a" },
-      { name: "Card / With Image", key: "e08ddcd5497b6fdaf55a9312be53e1d1a6126f18" },
+      {
+        name: "Card / With Header and Footer",
+        key: "7d9e007b76f1f7f33164d2195da568a64a87f74a",
+      },
+      {
+        name: "Card / With Image",
+        key: "e08ddcd5497b6fdaf55a9312be53e1d1a6126f18",
+      },
     ],
   },
   datePicker: {
@@ -1403,15 +1598,24 @@ export const DS4DS_COMPONENT_CATEGORIES = {
   progressIndicator: {
     label: "Progress Indicator",
     components: [
-      { name: "Progress Indicator / 1", key: "82110e30c92a62c2db92bf3b643f930b30298c57" },
-      { name: "Progress Indicator / 2", key: "abc98de5a5c3aa657061a367d38f45fa43d2d000" },
+      {
+        name: "Progress Indicator / 1",
+        key: "82110e30c92a62c2db92bf3b643f930b30298c57",
+      },
+      {
+        name: "Progress Indicator / 2",
+        key: "abc98de5a5c3aa657061a367d38f45fa43d2d000",
+      },
     ],
   },
   table: {
     label: "Table",
     components: [
       { name: "Table grid", key: "fd48337e270dce4c2462adb1f29a8869ca6b9d86" },
-      { name: "Table columns", key: "c09bf6bf9d929ab656ad7aa4024a5823b32cb342" },
+      {
+        name: "Table columns",
+        key: "c09bf6bf9d929ab656ad7aa4024a5823b32cb342",
+      },
       { name: "Table rows", key: "4320038ee1afde6d5ddbc58355a196d4e03cfd0b" },
     ],
   },
