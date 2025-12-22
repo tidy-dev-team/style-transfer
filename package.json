@@ -18,8 +18,8 @@
     "editorType": [
       "figma"
     ],
-    "id": "preact-rectangles",
-    "name": "Preact Rectangles",
+    "id": "style-transfer",
+    "name": "Style Transfer",
     "main": "src/main.ts",
     "ui": "src/ui.tsx"
   }
