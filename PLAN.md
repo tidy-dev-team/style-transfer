@@ -10,48 +10,88 @@ A Figma plugin that extracts styles from ideation files (client designs, Figma M
 
 ---
 
-## DS4DS Variable Structure Reference
+## DS4DS Structure Reference
 
-Based on analysis of Kido-DS (`WNOcZbybSn7dAGjTMimIsJ`):
+Based on actual Figma Variables export from Kido-DS (`WNOcZbybSn7dAGjTMimIsJ`):
 
-### Naming Conventions
+### Variable Collections
 
-```
-system/{category}/{subcategory}/{variant}
-components/{component}/{variant}/{property}-{state}
-radius/semantic/{size}
-width/{type}
-{typography-role}/{size}
-```
+| Collection | Mode(s) | Content |
+|------------|---------|---------|
+| **spacing** | Mode 1 | 30 spacing values (2-120px, negatives) |
+| **border** | Mode 1 | Width tokens + Radius tokens |
+| **theme** | **Light, Dark** | System colors, Component colors, Alpha colors, Shadows |
+| **Tailwind CSS v4.0.0** | Mode 1 | Primitive color palette |
 
 ### Key Token Categories
 
 | Category | Examples | Notes |
 |----------|----------|-------|
-| System BG | `system/bg/primary`, `system/bg/01`, `system/bg/inverse` | Background colors |
-| System FG | `system/fg/01`, `system/fg/primary`, `system/fg/disabled` | Foreground/text colors |
-| System Border | `system/border/interactive/hover`, `system/border/static/03` | Border colors |
-| System Overlays | `system/overlays/overlay-hover`, `system/overlays/overlay-active` | Overlay colors with opacity |
-| Component Tokens | `components/button/outlined/bg-hover` | Component-specific |
-| Radius | `radius/semantic/small-controls` (6), `radius/semantic/large-controls` (8) | Border radius |
-| Spacing | `4`, `8`, `10`, `12`, `16`, `20` | Raw number tokens |
-| Width | `width/default` (1), `width/thick` (2) | Stroke widths |
-| Typography | `label/m`, `body/l-medium` | Font styles |
+| System BG | `system/bg/primary`, `system/bg/01`...`04`, `system/bg/inverse` | Background colors |
+| System FG | `system/fg/01`...`03`, `system/fg/primary`, `system/fg/disabled` | Text/foreground colors |
+| System Border | `system/border/static/01`...`03`, `system/border/interactive/hover` | Border colors |
+| System Overlays | `system/overlays/overlay-hover`, `overlay-active` | Overlay colors |
+| System Feedback | `system/feedback/danger/subtle\|medium\|strong` | Semantic feedback |
+| Component Tokens | `components/button/outlined/bg-hover` | Component-specific overrides |
+| Radius Semantic | `radius/semantic/large-controls` (8px), `small-controls` (6px) | Border radius |
+| Radius Global | `radius/global/2`, `4`, `6`, `8`, `12`... | Raw radius values |
+| Width | `width/thin` (0.5), `default` (1), `thick` (2) | Stroke widths |
+| Alpha | `alpha/primary/500-20p`, `alpha/white/12p` | Opacity variants |
 
-### Important Patterns
+### Radius Semantic Values
 
-1. **Inverse via naming**: No variable modes - uses `-inverse` suffix instead
-   - `system/fg/disabled` vs `system/fg/disabled-inverse`
+| Token | Value | Use Case |
+|-------|-------|----------|
+| `sharp` | 0 | No radius |
+| `tiny-elements` | 2px | Very small elements |
+| `small-elements` | 4px | Small elements |
+| `small-controls` | 6px | Checkboxes, small inputs |
+| `large-controls` | 8px | Buttons, inputs |
+| `default-surface` | 8px | Cards, panels |
+| `large-surface` | 12px | Modals, dialogs |
+| `max` | 1000px | Pills, avatars |
 
-2. **Primary color derivation**: `#615fff` appears in multiple forms:
-   - `#615fff` - base (100%)
-   - `#615fff33` - hover (20% opacity)
-   - `#615fff61` - pressed (38% opacity)
-   - `#615fff80` - focused (50% opacity)
+### Alpha Color Levels
 
-3. **State tokens**: Button states are explicit tokens
-   - `bg-idle`, `bg-hover`, `bg-pressed`
-   - `fg-idle`, `fg-hover`, `fg-active`
+Primary color opacity variants: `4p`, `8p`, `12p`, `20p`, `38p`, `50p`
+
+Example: `#615fff` (indigo.500) generates:
+- `alpha/primary/500-20p` → `rgba(97, 95, 255, 0.20)` for outlined button hover
+- `alpha/primary/500-38p` → `rgba(97, 95, 255, 0.38)` for outlined button pressed
+
+---
+
+## DS4DS Components (89 total)
+
+Full component list organized by category:
+
+| Category | Components |
+|----------|------------|
+| Avatar | Avatar, Username, Avatar Number, Avatar Group |
+| Badge | Badge, Asset Badge, Text Badge, Pill Badge |
+| Buttons | Buttons, Button Icon, Button Text |
+| Checkbox | Checkbox Icon, Checkbox Item Icon, CheckboxVector, Checkbox Item Vector |
+| Chips | Chips |
+| Inputs | Text Input (Outlined/Contained/Underlined), Select Input (3 variants), Text Area (3 variants), Numeric Input (8 variants) |
+| Radio | Radio Button / Icon, Radio Button Item / Icon, etc. |
+| Slider | Basic, With Values, With Values and Marks |
+| Search | 6 variants (Simple + Label, each in 3 styles) |
+| Tabs | 6 tab bar variants |
+| Toggle | 5 toggle variants |
+| Tooltip | Tooltip, Tooltip / Outlined |
+| Banner | Contained, Outlined, With Partial Stroke |
+| Dropdown | Dropdown |
+| List | Checkbox Items, Radio Button Items, Dropdown Items, Toggle Items |
+| Pagination | Pagination, Dots, Controls |
+| Progress | Progress Bar, Progress Indicator (2 variants) |
+| Snackbar | Basic, Contained, Outlined, Partial Stroke |
+| Toast | Contained, Outlined, Partial Stroke |
+| Card | Empty, With Header and Footer, With Image |
+| Date Picker | Date picker, Year picker, Month picker |
+| Modal | Modal |
+| Table | Grid, Columns, Rows |
+
+**All component keys are stored in `src/shared/ds4ds-schema.ts`.**
 
 ---
 
@@ -72,8 +112,7 @@ src/
 │   │   ├── fill.ts            # Fill/color extraction
 │   │   ├── stroke.ts          # Stroke extraction
 │   │   ├── radius.ts          # Corner radius extraction
-│   │   ├── spacing.ts         # Padding/gap extraction
-│   │   └── typography.ts      # [Future] Font extraction
+│   │   └── spacing.ts         # Padding/gap extraction
 │   └── derivation.ts          # Color derivation logic (opacity variants)
 │
 ├── apply/
@@ -83,8 +122,7 @@ src/
 │   └── applicator.ts          # Write to Figma Variables API
 │
 ├── shared/
-│   ├── semantic-tags.ts       # Component/variant tag definitions
-│   ├── variable-schema.ts     # DS4DS variable schema/index
+│   ├── ds4ds-schema.ts        # ✅ Complete DS4DS schema (variables + components)
 │   └── json-schema.ts         # Export/import JSON format
 │
 └── utils/
@@ -93,7 +131,144 @@ src/
     └── storage.ts             # Plugin data persistence
 ```
 
-### Data Flow
+---
+
+## UI Design
+
+### Mode Separation: Tabs with Clear Context
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  📦 Style Transfer                                           │
+├────────────────────┬─────────────────────────────────────────┤
+│  [🎨 Extract]      │  [📋 Apply]                             │
+├────────────────────┴─────────────────────────────────────────┤
+│                                                              │
+│   Tab content changes based on selected mode                 │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+```
+
+**Tab Visual Distinction:**
+- Extract tab: Purple/brand accent
+- Apply tab: Green accent
+- Active tab has filled background, inactive has outline
+
+---
+
+### Extract Mode UI
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  📦 Style Transfer                                           │
+├────────────────────┬─────────────────────────────────────────┤
+│  [🎨 Extract ✓]    │  [📋 Apply]                             │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  SELECTED ELEMENT                                            │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │ "Primary Button"                                       │  │
+│  │ Frame • 104×40 • 1 fill • radius: 8                    │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                              │
+│  ─────────────────────────────────────────────────────────   │
+│                                                              │
+│  MAP TO DS4DS COMPONENT                                      │
+│                                                              │
+│  Category:   [Button             ▼]                          │
+│  Component:  [Buttons            ▼]                          │
+│                                                              │
+│  ─────────────────────────────────────────────────────────   │
+│                                                              │
+│  EXTRACTED PROPERTIES → VARIABLE MAPPING                     │
+│                                                              │
+│  Fill #615FFF                                                │
+│  ├─ ● system/bg/primary (suggested)                          │
+│  ├─ ○ system/fg/primary                                      │
+│  └─ ○ [Browse all...]                                        │
+│                                                              │
+│  Radius 8px                                                  │
+│  └─ ● radius/semantic/large-controls                         │
+│                                                              │
+│  ─────────────────────────────────────────────────────────   │
+│                                                              │
+│  EXTRACTION COLLECTION (3)                                   │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │ • Button → #615FFF, r:8                         [×]    │  │
+│  │ • Input → #F8FAFC, border:#CAD5E2               [×]    │  │
+│  │ • Card → #FFFFFF, r:12                          [×]    │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                              │
+│  [+ Add Current Selection]        [Export JSON]              │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Key UI Features:
+
+1. **Hybrid Matching Approach**
+   - Dropdown selects DS4DS component category + component
+   - Extracted properties show **smart suggestions** based on component type
+   - User can accept suggestions or browse all variables
+
+2. **Smart Suggestions Logic**
+   ```typescript
+   // When user selects "Button" → "Buttons"
+   // And extracted fill is #615FFF
+   // Suggest: system/bg/primary (because contained buttons use this)
+   
+   // When extracted radius is 8px
+   // Suggest: radius/semantic/large-controls (exact match)
+   ```
+
+3. **Extraction Collection**
+   - Shows running list of all extractions
+   - Can remove items
+   - Persists during session
+
+---
+
+### Apply Mode UI
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  📦 Style Transfer                                           │
+├────────────────────┬─────────────────────────────────────────┤
+│  [🎨 Extract]      │  [📋 Apply ✓]                           │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  IMPORT STYLES                                               │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │  [📁 Import JSON File]                                 │  │
+│  │  or paste JSON below...                                │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                              │
+│  ─────────────────────────────────────────────────────────   │
+│                                                              │
+│  PREVIEW CHANGES (12 variables)                              │
+│                                                              │
+│  Theme Mode: [Light ▼] [Dark ▼] [Both ▼]                     │
+│                                                              │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │ Variable                    Current      New           │  │
+│  ├────────────────────────────────────────────────────────┤  │
+│  │ system/bg/primary           #615FFF  →   #3366FF  ✓    │  │
+│  │ system/fg/primary           #615FFF  →   #3366FF  ✓    │  │
+│  │ alpha/primary/500-20p       rgba...  →   rgba...  ✓    │  │
+│  │ radius/semantic/large-ctrl  8        →   12       ✓    │  │
+│  │ ...                                                    │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                              │
+│  ─────────────────────────────────────────────────────────   │
+│                                                              │
+│  [Cancel]                              [Apply 12 Changes]    │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Data Flow
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -103,26 +278,23 @@ src/
 │                                                                         │
 │  1. Designer selects element(s) in Figma                                │
 │                    ↓                                                    │
-│  2. Plugin reads selection, shows properties                            │
+│  2. Plugin shows selection properties + DS4DS component picker          │
 │                    ↓                                                    │
-│  3. Designer tags element semantically:                                 │
-│     • Component type: Button                                            │
-│     • Variant: contained                                                │
-│     • Size: M                                                           │
-│     • State: idle                                                       │
+│  3. Designer selects target component (e.g., Buttons)                   │
 │                    ↓                                                    │
-│  4. Plugin extracts properties:                                         │
-│     • fills, strokes, cornerRadius, padding                             │
+│  4. Plugin suggests variable mappings based on:                         │
+│     • Component type → expected variables                               │
+│     • Property type (fill → color vars, radius → radius vars)           │
 │                    ↓                                                    │
-│  5. Plugin derives opacity variants from base colors                    │
+│  5. Designer confirms/adjusts mappings, adds to collection              │
 │                    ↓                                                    │
-│  6. Extraction added to collection                                      │
+│  6. Plugin auto-derives opacity variants from primary colors            │
 │                    ↓                                                    │
 │  7. Designer exports collection as JSON                                 │
 │                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
                                    ↓
-                            JSON FILE (portable)
+                       JSON FILE (portable, versioned)
                                    ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                            APPLY MODE                                    │
@@ -131,19 +303,19 @@ src/
 │                                                                         │
 │  1. Designer imports JSON file                                          │
 │                    ↓                                                    │
-│  2. Plugin parses and validates                                         │
+│  2. Plugin validates and parses                                         │
 │                    ↓                                                    │
-│  3. Plugin generates variable mappings:                                 │
-│     • Extracted primary → system/bg/primary, system/fg/primary, etc.   │
-│     • Extracted radius → radius/semantic/large-controls                 │
+│  3. Plugin shows preview with:                                          │
+│     • Variable name                                                     │
+│     • Current value (from DS)                                           │
+│     • New value (from extraction)                                       │
 │                    ↓                                                    │
-│  4. Plugin shows preview:                                               │
-│     • "system/bg/primary: #615fff → #3366ff"                           │
-│     • "radius/semantic/large-controls: 8 → 12"                         │
+│  4. Designer selects theme mode(s): Light, Dark, or Both                │
 │                    ↓                                                    │
-│  5. Designer confirms / adjusts mappings                                │
+│  5. Designer confirms changes                                           │
 │                    ↓                                                    │
-│  6. Plugin applies changes via Figma Variables API                      │
+│  6. Plugin applies via Figma Variables API:                             │
+│     variable.setValueForMode(modeId, newValue)                          │
 │                    ↓                                                    │
 │  7. Components auto-update (they reference variables)                   │
 │                                                                         │
@@ -158,18 +330,17 @@ src/
 {
   "meta": {
     "version": "1.0.0",
-    "exportedAt": "2024-12-18T12:00:00Z",
+    "exportedAt": "2024-12-22T12:00:00Z",
     "sourceFileName": "Client X - Ideation",
     "sourceFileKey": "abc123"
   },
   "extractions": [
     {
       "id": "ext_001",
-      "semanticTag": {
-        "component": "button",
-        "variant": "contained",
-        "size": "m",
-        "state": "idle"
+      "dsComponent": {
+        "category": "button",
+        "name": "Buttons",
+        "key": "1a45acec266bbb1bd1338744453eb9e33aa2af53"
       },
       "sourceNode": {
         "id": "123:456",
@@ -177,48 +348,48 @@ src/
       },
       "properties": {
         "fills": [
-          {
-            "type": "SOLID",
-            "color": { "r": 0.2, "g": 0.4, "b": 1, "a": 1 },
-            "hex": "#3366FF"
-          }
+          { "type": "SOLID", "hex": "#3366FF" }
         ],
-        "strokes": [],
         "cornerRadius": 12,
-        "padding": {
-          "top": 12,
-          "right": 24,
-          "bottom": 12,
-          "left": 24
-        }
-      }
+        "strokes": [
+          { "type": "SOLID", "hex": "#2255EE", "weight": 1 }
+        ]
+      },
+      "mappings": [
+        { "property": "fill", "variableName": "system/bg/primary" },
+        { "property": "radius", "variableName": "radius/semantic/large-controls" }
+      ]
     }
   ],
   "derivedTokens": {
-    "colors": {
-      "primary": {
-        "base": "#3366FF",
-        "hover": "#3366FF33",
-        "pressed": "#3366FF61",
-        "focused": "#3366FF80"
+    "primaryColor": {
+      "base": "#3366FF",
+      "alpha": {
+        "4p": "rgba(51, 102, 255, 0.04)",
+        "8p": "rgba(51, 102, 255, 0.08)",
+        "12p": "rgba(51, 102, 255, 0.12)",
+        "20p": "rgba(51, 102, 255, 0.20)",
+        "38p": "rgba(51, 102, 255, 0.38)",
+        "50p": "rgba(51, 102, 255, 0.50)"
       }
-    },
-    "radii": {
-      "large-controls": 12
-    },
-    "spacing": [12, 24]
+    }
   },
   "variableMappings": [
     {
       "variableName": "system/bg/primary",
-      "newValue": "#3366FF",
-      "sourceExtraction": "ext_001"
+      "newValue": { "r": 0.2, "g": 0.4, "b": 1 },
+      "modes": ["Light", "Dark"]
     },
     {
-      "variableName": "components/button/outlined/bg-hover",
-      "newValue": "#3366FF33",
-      "derived": true,
-      "derivedFrom": "primary @ 20%"
+      "variableName": "alpha/primary/500-20p",
+      "newValue": { "r": 0.2, "g": 0.4, "b": 1, "a": 0.2 },
+      "modes": ["Light", "Dark"],
+      "derived": true
+    },
+    {
+      "variableName": "radius/semantic/large-controls",
+      "newValue": 12,
+      "modes": ["Mode 1"]
     }
   ]
 }
@@ -226,217 +397,155 @@ src/
 
 ---
 
-## Semantic Tag System
-
-### Component Types (MVP)
-
-```typescript
-const COMPONENT_TYPES = [
-  'button',
-  'input',
-  'checkbox',
-  'toggle',
-  'card',
-  'badge',
-] as const;
-
-const BUTTON_VARIANTS = ['contained', 'outlined', 'ghost', 'text'] as const;
-const SIZES = ['xs', 's', 'm', 'l', 'xl'] as const;
-const STATES = ['idle', 'hover', 'pressed', 'focused', 'disabled'] as const;
-const INVERSE = ['normal', 'inverse'] as const;
-```
-
-### Semantic Tag → Variable Mapping
-
-```typescript
-// Example: button/contained/m/idle → variable mappings
-const BUTTON_CONTAINED_MAPPINGS = {
-  fill: [
-    'system/bg/primary',
-  ],
-  fillDerived: {
-    hover: 'system/overlays/overlay-hover-on-color',
-    pressed: 'system/overlays/overlay-active-on-color',
-  },
-  textColor: [
-    'system/fg/inverse',
-    'system/fg/white',
-  ],
-  radius: [
-    'radius/semantic/large-controls',
-  ],
-};
-
-const BUTTON_OUTLINED_MAPPINGS = {
-  stroke: [
-    'system/border/interactive/hover',
-    'system/border/interactive/active',
-  ],
-  fillDerived: {
-    hover: 'components/button/outlined/bg-hover',      // 20% opacity
-    pressed: 'components/button/outlined/bg-pressed',  // 38% opacity
-  },
-  // ...
-};
-```
-
----
-
 ## Color Derivation Logic
 
 ```typescript
-// Primary color → derived variants
-function derivePrimaryColorTokens(primaryHex: string): DerivedColors {
-  const base = hexToRgba(primaryHex);
-  
-  return {
-    base: primaryHex,
-    hover: rgbaToHex({ ...base, a: 0.20 }),      // 20% opacity
-    pressed: rgbaToHex({ ...base, a: 0.38 }),   // 38% opacity
-    focused: rgbaToHex({ ...base, a: 0.50 }),   // 50% opacity
-  };
+const ALPHA_LEVELS = [0.04, 0.08, 0.12, 0.20, 0.38, 0.50] as const;
+const ALPHA_NAMES = ['4p', '8p', '12p', '20p', '38p', '50p'] as const;
+
+interface DerivedAlphaColors {
+  [key: string]: RGBA;
 }
 
-// Active/darker variant (for system/fg/active, etc.)
-function deriveActiveColor(primaryHex: string): string {
-  // Darken by ~10-15%
-  return darken(primaryHex, 0.12);
+function derivePrimaryAlphaColors(baseHex: string): DerivedAlphaColors {
+  const base = hexToRgba(baseHex);
+  
+  const result: DerivedAlphaColors = {};
+  ALPHA_LEVELS.forEach((alpha, i) => {
+    result[ALPHA_NAMES[i]] = { ...base, a: alpha };
+  });
+  
+  return result;
 }
+
+// Maps to these variables:
+// alpha/primary/500-4p
+// alpha/primary/500-8p
+// alpha/primary/500-12p
+// alpha/primary/500-20p  → components/button/outlined/bg-hover
+// alpha/primary/500-38p  → components/button/outlined/bg-pressed
+// alpha/primary/500-50p  → system/border/interactive/focused
 ```
 
 ---
 
 ## Implementation Phases
 
-### Phase 1: Project Setup & Core Types
-**Effort: 0.5 day**
+### Phase 1: Project Setup & Schema ✅
+**Status: COMPLETE**
 
-- [ ] Initialize create-figma-plugin project
-- [ ] Set up TypeScript configuration
-- [ ] Define core types (`types.ts`)
-- [ ] Create semantic tag constants
-- [ ] Set up UI component structure with mode tabs
+- [x] Initialize create-figma-plugin project
+- [x] Set up TypeScript configuration
+- [x] Create DS4DS schema with all variables
+- [x] Add DS4DS component registry (89 components)
 
 ### Phase 2: Extract Mode - UI
-**Effort: 1 day**
-
-- [ ] Selection listener (show selected node info)
-- [ ] Semantic tag builder UI (dropdowns for component/variant/size/state)
-- [ ] Extraction collection list UI
-- [ ] Export JSON button
-
-### Phase 3: Extract Mode - Property Extraction
 **Effort: 1.5 days**
 
-- [ ] Fill extractor (solid colors, handle gradients gracefully)
+- [ ] Mode tabs UI (Extract/Apply)
+- [ ] Selection listener (show selected node info)
+- [ ] DS4DS component picker (category → component dropdowns)
+- [ ] Property display with suggested variable mappings
+- [ ] Extraction collection list
+- [ ] Export JSON functionality
+
+### Phase 3: Extract Mode - Extraction Logic
+**Effort: 1 day**
+
+- [ ] Fill extractor (solid colors)
 - [ ] Stroke extractor (color, weight)
 - [ ] Radius extractor (uniform + individual corners)
-- [ ] Spacing extractor (auto-layout padding, gap)
-- [ ] Color derivation logic (opacity variants)
+- [ ] Color derivation (alpha variants)
+- [ ] Smart suggestion engine (component → expected variables)
 
 ### Phase 4: Apply Mode - UI
 **Effort: 1 day**
 
-- [ ] JSON import UI (file upload or paste)
-- [ ] Mapping preview list
-- [ ] Edit mapping UI (dropdown to change target variable)
+- [ ] JSON import UI (file upload + paste)
+- [ ] Change preview table (current → new)
+- [ ] Theme mode selector (Light/Dark/Both)
 - [ ] Apply button with confirmation
 
 ### Phase 5: Apply Mode - Variable Updates
 **Effort: 1.5 days**
 
 - [ ] Read existing variables from file
-- [ ] Build mapping between extracted values and variables
-- [ ] Preview generation (before → after)
-- [ ] Apply changes via `variable.setValueForMode()`
+- [ ] Match variable names to Figma Variable objects
+- [ ] Preview generation (before → after values)
+- [ ] Apply changes via `variable.setValueForMode(modeId, value)`
 - [ ] Handle errors (variable not found, type mismatch)
 
 ### Phase 6: Polish & Edge Cases
-**Effort: 1.5 days**
+**Effort: 1 day**
 
 - [ ] Error handling and user feedback
 - [ ] Loading states
 - [ ] Validation (JSON format, required fields)
 - [ ] Empty states
-- [ ] Settings persistence (last used mappings)
-- [ ] UI polish
+- [ ] Session persistence (extractions survive re-open)
 
 ---
 
-## MVP Milestones
+## Milestones
 
 | Milestone | Deliverable | Est. Effort |
 |-----------|-------------|-------------|
-| **M1** | Project setup, types, UI shell with tabs | 0.5 day |
-| **M2** | Extract mode UI complete | 1 day |
-| **M3** | Property extraction working (fills, radius, spacing) | 1.5 days |
-| **M4** | JSON export functional | 0.5 day |
+| **M1** | Project setup, schema complete | ✅ Done |
+| **M2** | Extract mode UI shell | 1 day |
+| **M3** | Property extraction + suggestions | 1 day |
+| **M4** | JSON export working | 0.5 day |
 | **M5** | Apply mode UI complete | 1 day |
 | **M6** | Variable mapping & preview | 1 day |
 | **M7** | Apply to variables working | 1 day |
-| **M8** | Polish, error handling, edge cases | 1.5 days |
+| **M8** | Polish, error handling | 1 day |
 
-**Total estimated effort: ~8 days**
-
----
-
-## Future Enhancements (Post-MVP)
-
-### Phase 7: Typography Support
-- Font family extraction
-- Font weight, size, line-height
-- Map to typography tokens
-
-### Phase 8: Effects Support
-- Shadow extraction
-- Blur extraction
-- Map to effect tokens (if DS4DS uses them)
-
-### Phase 9: Smart Features
-- Auto-detect component types from ideation
-- Suggest mappings based on color similarity
-- Batch operations
-
-### Phase 10: Presets & Profiles
-- Save client-specific mapping profiles
-- Quick-apply for repeat clients
-- Template system
+**Total estimated effort: ~7 days**
 
 ---
 
 ## Technical Notes
 
+### Theme Modes
+
+DS4DS uses two theme modes that need to be handled:
+- **Light** - Default values
+- **Dark** - Inverted values
+
+When applying styles, user chooses:
+- Apply to Light only
+- Apply to Dark only  
+- Apply to Both (most common for brand colors)
+
+```typescript
+const collection = figma.variables.getLocalVariableCollections()
+  .find(c => c.name === 'theme');
+
+const lightModeId = collection.modes.find(m => m.name === 'Light')?.modeId;
+const darkModeId = collection.modes.find(m => m.name === 'Dark')?.modeId;
+
+// Apply to both modes
+variable.setValueForMode(lightModeId, newValue);
+variable.setValueForMode(darkModeId, newValue);
+```
+
 ### Figma Variables API
 
 ```typescript
-// Read variables
-const variables = figma.variables.getLocalVariables();
-const colorVars = variables.filter(v => v.resolvedType === 'COLOR');
+// Read all variables
+const allVars = figma.variables.getLocalVariables();
 
-// Get variable by name
-const variable = variables.find(v => v.name === 'system/bg/primary');
+// Find by name
+const primaryBg = allVars.find(v => v.name === 'system/bg/primary');
 
-// Update variable value
-const modeId = Object.keys(variable.valuesByMode)[0]; // Get first mode
-variable.setValueForMode(modeId, newColorValue);
-```
+// Update value for specific mode
+primaryBg.setValueForMode(modeId, { r: 0.2, g: 0.4, b: 1 });
 
-### Color Format Conversion
-
-```typescript
-// Figma uses 0-1 range for RGB
+// Color format (Figma uses 0-1 range)
 interface FigmaColor {
   r: number;  // 0-1
   g: number;  // 0-1
   b: number;  // 0-1
-}
-
-// Convert hex to Figma color
-function hexToFigmaColor(hex: string): FigmaColor {
-  const r = parseInt(hex.slice(1, 3), 16) / 255;
-  const g = parseInt(hex.slice(3, 5), 16) / 255;
-  const b = parseInt(hex.slice(5, 7), 16) / 255;
-  return { r, g, b };
+  a?: number; // 0-1, optional for alpha
 }
 ```
 
@@ -447,47 +556,46 @@ function hexToFigmaColor(hex: string): FigmaColor {
 import { emit, on, showUI } from '@create-figma-plugin/utilities';
 
 export default function () {
-  showUI({ width: 360, height: 500 });
+  showUI({ width: 400, height: 600 });
   
-  // Listen for extraction request
-  on('EXTRACT_SELECTION', () => {
+  // Selection change listener
+  figma.on('selectionchange', () => {
     const selection = figma.currentPage.selection;
-    const extracted = extractProperties(selection[0]);
-    emit('EXTRACTION_RESULT', extracted);
+    if (selection.length > 0) {
+      emit('SELECTION_CHANGED', extractSelectionInfo(selection[0]));
+    }
   });
   
-  // Listen for apply request
+  // Apply request
   on('APPLY_MAPPINGS', (mappings) => {
-    applyToVariables(mappings);
-    emit('APPLY_COMPLETE', { success: true });
+    const results = applyToVariables(mappings);
+    emit('APPLY_COMPLETE', results);
   });
 }
 ```
 
 ---
 
-## Open Items / Decisions Made
+## Key Decisions
 
-| Item | Decision |
-|------|----------|
-| Plugin architecture | Single plugin with two modes (Extract/Apply) |
-| Variable modes | DS4DS uses single mode; inverse via naming convention |
-| Source selection | Manual designer selection (no auto-detect for MVP) |
-| Color derivation | Auto-calculate opacity variants (20%, 38%, 50%) |
-| MVP scope | Colors + radii + spacing; modular for expansion |
-| Post-apply workflow | Manual completion → rename file → publish (user's choice) |
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Plugin architecture | Single plugin with tabs | Simpler UX, shared code |
+| Theme modes | Light + Dark | DS4DS uses both |
+| DS data source | Static schema file | Reliable, fast, versioned |
+| Component selection | Category → Component dropdowns | Organized, 89 components manageable |
+| Variable suggestions | Smart suggestions + browse all | Fast for common cases, flexible for edge |
+| Color derivation | Auto-calculate alpha variants | Consistent with DS4DS patterns |
+| JSON format | Full extraction + derived + mappings | Portable, debuggable, re-usable |
 
 ---
 
 ## Ready to Implement
 
-This plan covers:
-1. ✅ DS4DS variable structure analysis
-2. ✅ Architecture and file structure
-3. ✅ Data flow and JSON format
-4. ✅ Semantic tagging system
-5. ✅ Color derivation logic
-6. ✅ Implementation phases with estimates
-7. ✅ Technical implementation details
+Schema complete with:
+- ✅ All variable collections (spacing, border, theme, primitives)
+- ✅ All 89 DS4DS components with keys
+- ✅ Component → Variable mappings
+- ✅ Helper functions for lookups
 
-**Next step:** Review this plan and confirm to begin implementation.
+**Next step:** Confirm this plan and begin Phase 2 (Extract Mode UI).
