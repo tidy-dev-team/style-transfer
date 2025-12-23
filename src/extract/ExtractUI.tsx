@@ -1,5 +1,4 @@
 import {
-  Bold,
   Container,
   Divider,
   Dropdown,
@@ -9,15 +8,19 @@ import {
   Text,
   VerticalSpace,
 } from "@create-figma-plugin/ui";
-import { emit } from "@create-figma-plugin/utilities";
+import { emit, on } from "@create-figma-plugin/utilities";
 import { h, Fragment } from "preact";
-import { useCallback, useMemo, useState } from "preact/hooks";
+import { useCallback, useMemo, useState, useEffect } from "preact/hooks";
 
 import {
   SelectionInfo,
   ExtractionItem,
   VariableMapping,
   NotifyHandler,
+  GetComponentVariantsHandler,
+  ComponentVariantsHandler,
+  ComponentVariantsResult,
+  ComponentVariantProperty,
 } from "../types";
 import {
   DS4DS_COMPONENT_CATEGORIES,
@@ -219,6 +222,75 @@ export function ExtractUI({
   const [fillVariable, setFillVariable] = useState<string | null>(null);
   const [radiusVariable, setRadiusVariable] = useState<string | null>(null);
 
+  // Variant properties state
+  const [variantProperties, setVariantProperties] = useState<
+    ComponentVariantProperty[]
+  >([]);
+  const [selectedVariants, setSelectedVariants] = useState<
+    Record<string, string>
+  >({});
+  const [isLoadingVariants, setIsLoadingVariants] = useState(false);
+
+  // Listen for variant response
+  useEffect(() => {
+    const unsubscribe = on<ComponentVariantsHandler>(
+      "COMPONENT_VARIANTS",
+      (result: ComponentVariantsResult) => {
+        console.log("[ExtractUI] Received variant result:", result);
+        setIsLoadingVariants(false);
+
+        if (result.error) {
+          console.warn("[ExtractUI] Variant fetch error:", result.error);
+          setVariantProperties([]);
+          return;
+        }
+
+        // Filter to only VARIANT type properties
+        const variants = result.variantProperties.filter(
+          (p) => p.type === "VARIANT"
+        );
+        setVariantProperties(variants);
+
+        // Set default values for each variant
+        const defaults: Record<string, string> = {};
+        variants.forEach((prop) => {
+          if (prop.defaultValue && typeof prop.defaultValue === "string") {
+            defaults[prop.name] = prop.defaultValue;
+          } else if (prop.variantOptions && prop.variantOptions.length > 0) {
+            defaults[prop.name] = prop.variantOptions[0];
+          }
+        });
+        setSelectedVariants(defaults);
+      }
+    );
+    return unsubscribe;
+  }, []);
+
+  // Fetch variants when component is selected
+  useEffect(() => {
+    if (selectedComponentKey) {
+      console.log("[ExtractUI] Fetching variants for:", selectedComponentKey);
+      setIsLoadingVariants(true);
+      setVariantProperties([]);
+      setSelectedVariants({});
+      emit<GetComponentVariantsHandler>(
+        "GET_COMPONENT_VARIANTS",
+        selectedComponentKey
+      );
+    } else {
+      setVariantProperties([]);
+      setSelectedVariants({});
+    }
+  }, [selectedComponentKey]);
+
+  // Handle variant selection change
+  const handleVariantChange = useCallback((propName: string, value: string) => {
+    setSelectedVariants((prev) => ({
+      ...prev,
+      [propName]: value,
+    }));
+  }, []);
+
   // Category dropdown options
   const categoryOptions = useMemo(() => getCategoryOptions(), []);
 
@@ -346,6 +418,10 @@ export function ExtractUI({
         category: selectedCategory,
         name: component.name,
         key: component.key,
+        variants:
+          Object.keys(selectedVariants).length > 0
+            ? selectedVariants
+            : undefined,
       },
       properties: {
         fills: selection.fills,
@@ -361,6 +437,7 @@ export function ExtractUI({
     selection,
     selectedCategory,
     selectedComponentKey,
+    selectedVariants,
     fillVariable,
     radiusVariable,
     onAddExtraction,
@@ -433,6 +510,48 @@ export function ExtractUI({
                   value={selectedComponentKey}
                   placeholder="Select component..."
                 />
+              </Fragment>
+            )}
+
+            {/* Variant Selectors */}
+            {selectedComponentKey && (
+              <Fragment>
+                {isLoadingVariants ? (
+                  <Fragment>
+                    <VerticalSpace space="small" />
+                    <Text>
+                      <Muted>Loading variants...</Muted>
+                    </Text>
+                  </Fragment>
+                ) : variantProperties.length > 0 ? (
+                  <Fragment>
+                    <VerticalSpace space="medium" />
+                    <div style={styles.sectionTitle}>Variant Properties</div>
+                    {variantProperties.map((prop) => (
+                      <Fragment key={prop.name}>
+                        <Text>
+                          <Muted>{prop.name}</Muted>
+                        </Text>
+                        <VerticalSpace space="extraSmall" />
+                        <Dropdown
+                          onChange={(e: Event) => {
+                            const value = (e.target as HTMLInputElement).value;
+                            handleVariantChange(prop.name, value);
+                          }}
+                          options={
+                            prop.variantOptions?.map((opt) => ({
+                              value: opt,
+                              text: opt,
+                            })) || []
+                          }
+                          value={selectedVariants[prop.name] || null}
+                          placeholder={`Select ${prop.name}...`}
+                        />
+                        <VerticalSpace space="small" />
+                      </Fragment>
+                    ))}
+                  </Fragment>
+                ) : null}
               </Fragment>
             )}
           </div>

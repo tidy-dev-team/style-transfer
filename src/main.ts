@@ -10,6 +10,10 @@ import {
   RequestSelectionHandler,
   SelectionChangedHandler,
   SelectionInfo,
+  GetComponentVariantsHandler,
+  GetSelectionVariantsHandler,
+  ComponentVariantsHandler,
+  ComponentVariantProperty,
 } from "./types";
 
 // =============================================================================
@@ -168,6 +172,250 @@ export default function () {
   // Handle close
   on<CloseHandler>("CLOSE", () => {
     figma.closePlugin();
+  });
+
+  // Helper function to import component - tries ComponentSet first, then Component
+  async function importComponentOrSet(
+    key: string
+  ): Promise<ComponentSetNode | ComponentNode> {
+    try {
+      // First try to import as ComponentSet
+      const componentSet = await figma.importComponentSetByKeyAsync(key);
+      console.log(
+        "[StyleTransfer] Imported as ComponentSet:",
+        componentSet.name
+      );
+      return componentSet;
+    } catch (setError) {
+      console.log("[StyleTransfer] Not a ComponentSet, trying as Component...");
+      try {
+        // Fallback to importing as Component
+        const component = await figma.importComponentByKeyAsync(key);
+        console.log("[StyleTransfer] Imported as Component:", component.name);
+        return component;
+      } catch (compError) {
+        const errorMsg =
+          compError instanceof Error ? compError.message : String(compError);
+        throw new Error(`Failed to import component: ${errorMsg}`);
+      }
+    }
+  }
+
+  // Handle component variants request
+  on<GetComponentVariantsHandler>(
+    "GET_COMPONENT_VARIANTS",
+    async (componentKey: string) => {
+      console.log(
+        "[StyleTransfer] Fetching variants for component key:",
+        componentKey
+      );
+
+      try {
+        // Import component or component set from library
+        const imported = await importComponentOrSet(componentKey);
+        console.log(
+          "[StyleTransfer] Imported node:",
+          imported.name,
+          "type:",
+          imported.type
+        );
+
+        let componentSet: ComponentSetNode | null = null;
+
+        // Check what we got
+        if (imported.type === "COMPONENT_SET") {
+          componentSet = imported as ComponentSetNode;
+        } else if (imported.type === "COMPONENT") {
+          // If it's a component, check if it's part of a ComponentSet
+          if (imported.parent && imported.parent.type === "COMPONENT_SET") {
+            componentSet = imported.parent as ComponentSetNode;
+          }
+        }
+
+        if (componentSet) {
+          const variantProperties = extractVariantProperties(componentSet);
+          console.log(
+            "[StyleTransfer] Extracted variant properties:",
+            JSON.stringify(variantProperties, null, 2)
+          );
+
+          emit<ComponentVariantsHandler>("COMPONENT_VARIANTS", {
+            componentKey,
+            componentSetName: componentSet.name,
+            variantProperties,
+          });
+
+          figma.notify(
+            `Found ${variantProperties.length} properties for "${componentSet.name}"`
+          );
+        } else {
+          console.log(
+            "[StyleTransfer] Component is not part of a ComponentSet"
+          );
+          emit<ComponentVariantsHandler>("COMPONENT_VARIANTS", {
+            componentKey,
+            componentSetName: imported.name,
+            variantProperties: [],
+            error: "Component is not part of a ComponentSet (no variants)",
+          });
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        console.error(
+          "[StyleTransfer] Error fetching from library:",
+          errorMessage
+        );
+
+        // Fallback: Try to find from current selection if it's an instance
+        const selection = figma.currentPage.selection[0];
+        if (selection && selection.type === "INSTANCE") {
+          console.log(
+            "[StyleTransfer] Trying to get variants from selected instance..."
+          );
+          const mainComponent = selection.mainComponent;
+          if (mainComponent && mainComponent.parent?.type === "COMPONENT_SET") {
+            const componentSet = mainComponent.parent as ComponentSetNode;
+            const variantProperties = extractVariantProperties(componentSet);
+
+            emit<ComponentVariantsHandler>("COMPONENT_VARIANTS", {
+              componentKey,
+              componentSetName: componentSet.name,
+              variantProperties,
+            });
+
+            figma.notify(
+              `Found ${variantProperties.length} properties from selected instance`
+            );
+            return;
+          }
+        }
+
+        emit<ComponentVariantsHandler>("COMPONENT_VARIANTS", {
+          componentKey,
+          variantProperties: [],
+          error: `${errorMessage}. Try selecting a component instance from the library, or ensure the library is enabled.`,
+        });
+        figma.notify(
+          `Error: Library not accessible. Select a component instance instead.`,
+          { error: true }
+        );
+      }
+    }
+  );
+
+  // Helper function to extract variant properties from a ComponentSet
+  function extractVariantProperties(
+    componentSet: ComponentSetNode
+  ): ComponentVariantProperty[] {
+    console.log("[StyleTransfer] Found ComponentSet:", componentSet.name);
+    console.log(
+      "[StyleTransfer] componentPropertyDefinitions:",
+      JSON.stringify(componentSet.componentPropertyDefinitions, null, 2)
+    );
+
+    const variantProperties: ComponentVariantProperty[] = [];
+
+    for (const [propName, propDef] of Object.entries(
+      componentSet.componentPropertyDefinitions
+    )) {
+      console.log(
+        `[StyleTransfer] Property: ${propName}, Type: ${propDef.type}`
+      );
+
+      if (propDef.type === "VARIANT") {
+        variantProperties.push({
+          name: propName,
+          type: "VARIANT",
+          variantOptions: propDef.variantOptions,
+          defaultValue: propDef.defaultValue,
+        });
+      } else if (propDef.type === "BOOLEAN") {
+        variantProperties.push({
+          name: propName,
+          type: "BOOLEAN",
+          defaultValue: propDef.defaultValue,
+        });
+      } else if (propDef.type === "INSTANCE_SWAP") {
+        variantProperties.push({
+          name: propName,
+          type: "INSTANCE_SWAP",
+        });
+      } else if (propDef.type === "TEXT") {
+        variantProperties.push({
+          name: propName,
+          type: "TEXT",
+          defaultValue: propDef.defaultValue,
+        });
+      }
+    }
+
+    return variantProperties;
+  }
+
+  // Handle direct selection variants request (doesn't need library access)
+  on<GetSelectionVariantsHandler>("GET_SELECTION_VARIANTS", () => {
+    console.log("[StyleTransfer] Getting variants from current selection...");
+
+    const selection = figma.currentPage.selection[0];
+
+    if (!selection) {
+      emit<ComponentVariantsHandler>("COMPONENT_VARIANTS", {
+        componentKey: "",
+        variantProperties: [],
+        error: "No element selected",
+      });
+      return;
+    }
+
+    let componentSet: ComponentSetNode | null = null;
+    let componentKey = "";
+
+    // Check if selection is an instance
+    if (selection.type === "INSTANCE") {
+      const mainComponent = selection.mainComponent;
+      componentKey = mainComponent?.key || "";
+
+      if (mainComponent?.parent?.type === "COMPONENT_SET") {
+        componentSet = mainComponent.parent as ComponentSetNode;
+      }
+    }
+    // Check if selection is a component
+    else if (selection.type === "COMPONENT") {
+      componentKey = selection.key;
+
+      if (selection.parent?.type === "COMPONENT_SET") {
+        componentSet = selection.parent as ComponentSetNode;
+      }
+    }
+    // Check if selection is a component set
+    else if (selection.type === "COMPONENT_SET") {
+      componentSet = selection as ComponentSetNode;
+      // Get the key of the default variant
+      const defaultVariant = componentSet.defaultVariant;
+      componentKey = defaultVariant?.key || "";
+    }
+
+    if (componentSet) {
+      const variantProperties = extractVariantProperties(componentSet);
+
+      emit<ComponentVariantsHandler>("COMPONENT_VARIANTS", {
+        componentKey,
+        componentSetName: componentSet.name,
+        variantProperties,
+      });
+
+      figma.notify(
+        `Found ${variantProperties.length} properties for "${componentSet.name}"`
+      );
+    } else {
+      emit<ComponentVariantsHandler>("COMPONENT_VARIANTS", {
+        componentKey,
+        variantProperties: [],
+        error:
+          "Selected element is not a component instance, component, or component set",
+      });
+    }
   });
 
   // Send initial selection on load

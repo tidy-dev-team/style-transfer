@@ -72,6 +72,7 @@ export interface ExtractionItem {
     category: string;
     name: string;
     key: string;
+    variants?: Record<string, string>;
   };
   properties: {
     fills: ExtractedFill[];
@@ -158,4 +159,37 @@ export interface GetFileInfoHandler extends EventHandler {
 export interface FileInfoHandler extends EventHandler {
   name: "FILE_INFO";
   handler: (info: { fileName: string; fileKey: string }) => void;
+}
+
+// =============================================================================
+// COMPONENT VARIANTS
+// =============================================================================
+
+export interface ComponentVariantProperty {
+  name: string;
+  type: "VARIANT" | "BOOLEAN" | "INSTANCE_SWAP" | "TEXT";
+  variantOptions?: string[];
+  defaultValue?: string | boolean;
+}
+
+export interface ComponentVariantsResult {
+  componentKey: string;
+  componentSetName?: string;
+  variantProperties: ComponentVariantProperty[];
+  error?: string;
+}
+
+export interface GetComponentVariantsHandler extends EventHandler {
+  name: "GET_COMPONENT_VARIANTS";
+  handler: (componentKey: string) => void;
+}
+
+export interface GetSelectionVariantsHandler extends EventHandler {
+  name: "GET_SELECTION_VARIANTS";
+  handler: () => void;
+}
+
+export interface ComponentVariantsHandler extends EventHandler {
+  name: "COMPONENT_VARIANTS";
+  handler: (result: ComponentVariantsResult) => void;
 }
