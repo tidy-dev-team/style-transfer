@@ -14,6 +14,15 @@ import {
   GetSelectionVariantsHandler,
   ComponentVariantsHandler,
   ComponentVariantProperty,
+  ParseJsonHandler,
+  ParseResultHandler,
+  ApplyChangesHandler,
+  ApplyResultHandler,
+  GetCollectionsHandler,
+  CollectionsResultHandler,
+  StyleTransferExport,
+  VariablePreviewItem,
+  FigmaColor,
 } from "./types";
 
 // =============================================================================
@@ -415,6 +424,239 @@ export default function () {
         error:
           "Selected element is not a component instance, component, or component set",
       });
+    }
+  });
+
+  // =============================================================================
+  // APPLY MODE HANDLERS
+  // =============================================================================
+
+  // Get available variable collections and their modes
+  on<GetCollectionsHandler>("GET_COLLECTIONS", () => {
+    console.log("[StyleTransfer] Getting variable collections...");
+
+    const collections = figma.variables.getLocalVariableCollections();
+
+    const result = collections.map((c) => ({
+      id: c.id,
+      name: c.name,
+      modes: c.modes.map((m) => ({ name: m.name, modeId: m.modeId })),
+    }));
+
+    console.log("[StyleTransfer] Found collections:", result);
+    emit<CollectionsResultHandler>("COLLECTIONS_RESULT", result);
+  });
+
+  // Parse JSON and generate preview
+  on<ParseJsonHandler>("PARSE_JSON", (jsonString: string) => {
+    console.log("[StyleTransfer] Parsing JSON...");
+
+    try {
+      const data = JSON.parse(jsonString) as StyleTransferExport;
+
+      // Validate structure
+      if (!data.variableMappings || !Array.isArray(data.variableMappings)) {
+        throw new Error("Invalid JSON: missing variableMappings array");
+      }
+
+      if (!data.meta) {
+        throw new Error("Invalid JSON: missing meta object");
+      }
+
+      // Get all local variables
+      const localVars = figma.variables.getLocalVariables();
+      const varMap = new Map(localVars.map((v) => [v.name, v]));
+
+      console.log(`[StyleTransfer] Found ${localVars.length} local variables`);
+
+      // Build preview items
+      const items: VariablePreviewItem[] = data.variableMappings.map(
+        (mapping) => {
+          const variable = varMap.get(mapping.variableName);
+
+          if (!variable) {
+            return {
+              variableName: mapping.variableName,
+              newValue: mapping.newValue,
+              status: "not-found" as const,
+              errorMessage: "Variable not found in this file",
+            };
+          }
+
+          // Get current value (from first mode)
+          const collection = figma.variables.getVariableCollectionById(
+            variable.variableCollectionId
+          );
+          const modeId = collection?.modes[0]?.modeId;
+          let currentValue: FigmaColor | number | null = null;
+
+          if (modeId) {
+            const val = variable.valuesByMode[modeId];
+            // Handle variable alias
+            if (
+              typeof val === "object" &&
+              val !== null &&
+              "type" in val &&
+              val.type === "VARIABLE_ALIAS"
+            ) {
+              currentValue = null; // It's an alias, we'll show as "alias"
+            } else {
+              currentValue = val as FigmaColor | number;
+            }
+          }
+
+          // Check type compatibility
+          const newValueIsColor = typeof mapping.newValue === "object";
+          const varIsColor = variable.resolvedType === "COLOR";
+
+          if (newValueIsColor !== varIsColor) {
+            return {
+              variableName: mapping.variableName,
+              variableId: variable.id,
+              collection: collection?.name,
+              currentValue,
+              newValue: mapping.newValue,
+              status: "type-mismatch" as const,
+              errorMessage: `Type mismatch: expected ${
+                varIsColor ? "color" : "number"
+              }, got ${newValueIsColor ? "color" : "number"}`,
+            };
+          }
+
+          return {
+            variableName: mapping.variableName,
+            variableId: variable.id,
+            collection: collection?.name,
+            currentValue,
+            newValue: mapping.newValue,
+            status: "ready" as const,
+          };
+        }
+      );
+
+      const readyCount = items.filter((i) => i.status === "ready").length;
+      const errorCount = items.filter((i) => i.status !== "ready").length;
+
+      console.log(
+        `[StyleTransfer] Preview: ${readyCount} ready, ${errorCount} errors`
+      );
+
+      emit<ParseResultHandler>("PARSE_RESULT", {
+        success: true,
+        preview: {
+          meta: {
+            sourceFileName: data.meta.sourceFileName || "Unknown",
+            exportedAt: data.meta.exportedAt || new Date().toISOString(),
+            totalMappings: data.variableMappings.length,
+          },
+          items,
+          readyCount,
+          errorCount,
+        },
+      });
+
+      figma.notify(
+        `Parsed ${data.variableMappings.length} mappings (${readyCount} ready)`
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to parse JSON";
+      console.error("[StyleTransfer] Parse error:", errorMessage);
+      emit<ParseResultHandler>("PARSE_RESULT", {
+        success: false,
+        error: errorMessage,
+      });
+      figma.notify(`Error: ${errorMessage}`, { error: true });
+    }
+  });
+
+  // Apply changes to variables
+  on<ApplyChangesHandler>("APPLY_CHANGES", ({ modes, items }) => {
+    console.log(
+      `[StyleTransfer] Applying ${items.length} changes to modes:`,
+      modes
+    );
+
+    const errors: string[] = [];
+    let appliedCount = 0;
+
+    // Build a map of collection name -> mode name -> modeId
+    const collections = figma.variables.getLocalVariableCollections();
+    const modeIdMap = new Map<string, Map<string, string>>();
+
+    for (const collection of collections) {
+      const modeMap = new Map<string, string>();
+      for (const mode of collection.modes) {
+        modeMap.set(mode.name, mode.modeId);
+      }
+      modeIdMap.set(collection.id, modeMap);
+    }
+
+    // Apply each item
+    for (const item of items) {
+      if (item.status !== "ready" || !item.variableId) {
+        continue;
+      }
+
+      try {
+        const variable = figma.variables.getVariableById(item.variableId);
+        if (!variable) {
+          errors.push(`${item.variableName}: Variable not found`);
+          continue;
+        }
+
+        const collectionModes = modeIdMap.get(variable.variableCollectionId);
+        if (!collectionModes) {
+          errors.push(`${item.variableName}: Collection not found`);
+          continue;
+        }
+
+        // Apply to selected modes
+        let appliedToMode = false;
+        for (const modeName of modes) {
+          const modeId = collectionModes.get(modeName);
+          if (modeId) {
+            variable.setValueForMode(modeId, item.newValue);
+            appliedToMode = true;
+          }
+        }
+
+        // If no matching mode names, try to apply to all modes in the collection
+        if (!appliedToMode && modes.length > 0) {
+          // Apply to first mode as fallback
+          const firstModeId = collectionModes.values().next().value;
+          if (firstModeId) {
+            variable.setValueForMode(firstModeId, item.newValue);
+            appliedToMode = true;
+          }
+        }
+
+        if (appliedToMode) {
+          appliedCount++;
+        }
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        errors.push(`${item.variableName}: ${errorMsg}`);
+      }
+    }
+
+    console.log(
+      `[StyleTransfer] Applied ${appliedCount} changes, ${errors.length} errors`
+    );
+
+    emit<ApplyResultHandler>("APPLY_RESULT", {
+      success: errors.length === 0,
+      appliedCount,
+      errors,
+    });
+
+    if (errors.length > 0) {
+      figma.notify(
+        `Applied ${appliedCount} changes with ${errors.length} errors`,
+        { error: true }
+      );
+    } else {
+      figma.notify(`Successfully applied ${appliedCount} variable changes`);
     }
   });
 

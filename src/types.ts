@@ -193,3 +193,72 @@ export interface ComponentVariantsHandler extends EventHandler {
   name: "COMPONENT_VARIANTS";
   handler: (result: ComponentVariantsResult) => void;
 }
+
+// =============================================================================
+// APPLY MODE
+// =============================================================================
+
+export interface VariablePreviewItem {
+  variableName: string;
+  variableId?: string;
+  collection?: string;
+  currentValue?: FigmaColor | number | null;
+  newValue: FigmaColor | number;
+  status: "ready" | "not-found" | "type-mismatch";
+  errorMessage?: string;
+}
+
+export interface ApplyPreview {
+  meta: {
+    sourceFileName: string;
+    exportedAt: string;
+    totalMappings: number;
+  };
+  items: VariablePreviewItem[];
+  readyCount: number;
+  errorCount: number;
+}
+
+export interface CollectionInfo {
+  id: string;
+  name: string;
+  modes: { name: string; modeId: string }[];
+}
+
+export interface ParseJsonHandler extends EventHandler {
+  name: "PARSE_JSON";
+  handler: (jsonString: string) => void;
+}
+
+export interface ParseResultHandler extends EventHandler {
+  name: "PARSE_RESULT";
+  handler: (result: {
+    success: boolean;
+    preview?: ApplyPreview;
+    error?: string;
+  }) => void;
+}
+
+export interface ApplyChangesHandler extends EventHandler {
+  name: "APPLY_CHANGES";
+  handler: (options: { modes: string[]; items: VariablePreviewItem[] }) => void;
+}
+
+export interface ApplyResultHandler extends EventHandler {
+  name: "APPLY_RESULT";
+  handler: (result: {
+    success: boolean;
+    appliedCount: number;
+    errors: string[];
+  }) => void;
+}
+
+export interface GetCollectionsHandler extends EventHandler {
+  name: "GET_COLLECTIONS";
+  handler: () => void;
+}
+
+export interface CollectionsResultHandler extends EventHandler {
+  name: "COLLECTIONS_RESULT";
+  handler: (collections: CollectionInfo[]) => void;
+}
