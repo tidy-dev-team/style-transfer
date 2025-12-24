@@ -218,7 +218,9 @@ function formatValue(value: FigmaColor | number | null | undefined): string {
   return figmaColorToRgba(value);
 }
 
-function isColor(value: FigmaColor | number | null | undefined): value is FigmaColor {
+function isColor(
+  value: FigmaColor | number | null | undefined
+): value is FigmaColor {
   return typeof value === "object" && value !== null && "r" in value;
 }
 
@@ -517,7 +519,9 @@ export function ApplyUI() {
                           <span
                             style={{
                               ...styles.colorSwatch,
-                              backgroundColor: figmaColorToHex(item.currentValue),
+                              backgroundColor: figmaColorToHex(
+                                item.currentValue
+                              ),
                             }}
                           />
                         )}
